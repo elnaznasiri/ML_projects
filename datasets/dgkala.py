@@ -24,7 +24,7 @@ class Comment(TypedDict):
 
 def save_comments_to_json(
     comments: List[Comment],
-    filename: str = "comments.json",
+    filename: str = "datasets/ comments.json",
 ) -> None:
     with open(filename, "w", encoding="UTF-8") as f:
         json.dump(comments, f, indent=4)
