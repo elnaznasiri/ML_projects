@@ -4,7 +4,7 @@ from typing import List, TypedDict
 from pymongo import MongoClient
 
 #Create connection to MongoDB
-client = MongoClient('172.17.112.111',27017)
+client = MongoClient('',27017)
 #Set database name
 db = client['Crawler']
 #Set collection name
