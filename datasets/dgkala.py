@@ -1,14 +1,17 @@
-import json
-import requests
 from typing import List, TypedDict
 from pymongo import MongoClient
+import requests
+import configparser
+
+parser = configparser.ConfigParser()
+parser.read("connections.conf")
 
 #Create connection to MongoDB
-client = MongoClient('',27017)
+client = MongoClient((parser.get('mongodb_config','hostname')),int(parser.get('mongodb_config','port')))
 #Set database name
-db = client['Crawler']
+db = client[parser.get('mongodb_config','database')]
 #Set collection name
-collection = db['Digikala']
+collection = db[parser.get('mongodb_config','collection')]
 
 # Type definitions
 class Reactions(TypedDict):
