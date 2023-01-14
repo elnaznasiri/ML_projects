@@ -1,17 +1,7 @@
-from typing import List, TypedDict
-from pymongo import MongoClient
+import json
 import requests
-import configparser
-
-parser = configparser.ConfigParser()
-parser.read("connections.conf")
-
-#Create connection to MongoDB
-client = MongoClient((parser.get('mongodb_config','hostname')),int(parser.get('mongodb_config','port')))
-#Set database name
-db = client[parser.get('mongodb_config','database')]
-#Set collection name
-collection = db[parser.get('mongodb_config','collection')]
+from openpyxl import Workbook
+from typing import Any, Dict, List, TypedDict
 
 # Type definitions
 class Reactions(TypedDict):
@@ -30,17 +20,34 @@ class Comment(TypedDict):
     user_name: str
     is_anonymous: bool
 
+def save_comments_to_json(comments: List[Comment], filename: str = 'comments.json',) -> None:
+    with open(filename, 'w', encoding='UTF-8') as f:
+        json.dump(comments, f, indent=4)
 
-def sendCommentsIntoMongo(json_data):
+
+def save_comments_to_exel(json_data):
+    keys = []
+    wb = Workbook()
+    ws = wb.active
+
     for i in range(len(json_data)):
-        postID = collection.insert_one(json_data[i])
-        #Print ID of inserted document
-        print(postID)
+        sub_obj = json_data[i]
+        if i == 0:
+            keys = list(sub_obj.keys())
+            for k in range(len(keys)):
+                ws.cell(row=(i + 1), column=(k + 1), value=keys[k])
+        for j in range(len(keys)):
+            try:
+                ws.cell(row=(i + 2), column=(j + 1), value=sub_obj[keys[j]])
+            except:
+                pass
+
+    wb.save('result.xlsx')
 
 
-def getComment(sess: requests.Session, product_id: int, page: int = 1, pager: bool = False) -> List[Comment]:
-    response = sess.get(f'https://api.digikala.com/v1/product/{product_id}/comments/?page={page}')
-    
+def get_comment(sess: requests.Session, product_id: int, page: int = 1, pager: bool = False) -> List[Comment]:
+    URL = f'https://api.digikala.com/v1/product/{product_id}/comments/?page={page}'
+    response = sess.get(URL)
 
     if response.ok:
         data = response.json().get('data')
@@ -72,10 +79,10 @@ if __name__ == '__main__':
     product_id = 3493882
     sesstion = requests.Session()
 
-    comments, pager = getComment(sesstion, product_id, pager=True)
+    comments, pager = get_comment(sesstion, product_id, pager=True)
     total_pages = pager.get('total_pages')
 
     for page in range(1, total_pages + 1):
-        comment = getComment(sesstion, product_id, page=page)
+        comment = get_comment(sesstion, product_id, page=page)
         comments.extend(comment)
-    sendCommentsIntoMongo(comments)
+    save_comments_to_exel(comments)
