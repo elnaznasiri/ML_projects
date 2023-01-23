@@ -4,7 +4,7 @@ import requests
 import configparser
 
 parser = configparser.ConfigParser()
-parser.read("connections.conf")
+parser.read("D:\Programming\ML_projects\connections.conf")
 
 #Create connection to MongoDB
 client = MongoClient((parser.get('mongodb_config','hostname')),int(parser.get('mongodb_config','port')))
@@ -49,6 +49,7 @@ def getComment(sess: requests.Session, product_id: int, page: int = 1, pager: bo
         comments = []
         for comment in complete_comment:
             comments.append({
+                            'productID' : product_id,
                             'id': comment.get('id'),
                             'title': comment.get('title'),
                             'body': comment.get('body'),
