@@ -25,7 +25,7 @@ def save_comments_to_json(comments: List[Comment], filename: str = 'comments.jso
         json.dump(comments, f, indent=4)
 
 
-def save_comments_to_exel(json_data):
+def save_comments_to_exel(json_data, filename):
     keys = []
     wb = Workbook()
     ws = wb.active
@@ -42,7 +42,7 @@ def save_comments_to_exel(json_data):
             except:
                 pass
 
-    wb.save('result.xlsx')
+    wb.save(filename)
 
 
 def get_comment(sess: requests.Session, product_id: int, page: int = 1, pager: bool = False) -> List[Comment]:
@@ -56,6 +56,7 @@ def get_comment(sess: requests.Session, product_id: int, page: int = 1, pager: b
         comments = []
         for comment in complete_comment:
             comments.append({
+                            'productID' : product_id,
                             'id': comment.get('id'),
                             'title': comment.get('title'),
                             'body': comment.get('body'),
@@ -77,12 +78,13 @@ def get_comment(sess: requests.Session, product_id: int, page: int = 1, pager: b
 
 if __name__ == '__main__':
     product_id = 3493882
+    
     sesstion = requests.Session()
-
+    filename = "D:\Programming\ML_projects\OutputFiles\ " +  str(product_id)  + ".xlsx"
     comments, pager = get_comment(sesstion, product_id, pager=True)
     total_pages = pager.get('total_pages')
 
     for page in range(1, total_pages + 1):
         comment = get_comment(sesstion, product_id, page=page)
         comments.extend(comment)
-    save_comments_to_exel(comments)
+    save_comments_to_exel(comments, filename)
