@@ -1,4 +1,3 @@
-import json
 import requests
 from openpyxl import Workbook
 from typing import List, TypedDict
