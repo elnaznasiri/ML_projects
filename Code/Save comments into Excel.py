@@ -1,7 +1,7 @@
 import json
 import requests
 from openpyxl import Workbook
-from typing import Any, Dict, List, TypedDict
+from typing import List, TypedDict
 
 # Type definitions
 class Reactions(TypedDict):
@@ -19,10 +19,6 @@ class Comment(TypedDict):
     is_buyer: bool
     user_name: str
     is_anonymous: bool
-
-def save_comments_to_json(comments: List[Comment], filename: str = 'comments.json',) -> None:
-    with open(filename, 'w', encoding='UTF-8') as f:
-        json.dump(comments, f, indent=4)
 
 
 def save_comments_to_exel(json_data, filename):
