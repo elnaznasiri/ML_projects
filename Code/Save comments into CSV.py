@@ -71,7 +71,7 @@ if __name__ == '__main__':
     product_id = 3493882
     
     sesstion = requests.Session()
-    filename = "D:\Programming\ML_projects\OutputFiles\ " +  str(product_id)  + ".csv"
+    filename = "D:\Programming\ML_projects\OutputFiles\Stage\\" +  str(product_id)  + ".csv"
     comments, pager = get_comment(sesstion, product_id, pager=True)
     total_pages = pager.get('total_pages')
 
