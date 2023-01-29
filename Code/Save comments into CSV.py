@@ -1,5 +1,5 @@
+from csv import DictWriter
 import requests
-from openpyxl import Workbook
 from typing import List, TypedDict
 
 # Type definitions
@@ -22,23 +22,19 @@ class Comment(TypedDict):
 
 def save_comments_to_exel(json_data, filename):
     keys = []
-    wb = Workbook()
-    ws = wb.active
-
     for i in range(len(json_data)):
-        sub_obj = json_data[i]
-        if i == 0:
-            keys = list(sub_obj.keys())
-            for k in range(len(keys)):
-                ws.cell(row=(i + 1), column=(k + 1), value=keys[k])
-        for j in range(len(keys)):
-            try:
-                ws.cell(row=(i + 2), column=(j + 1), value=sub_obj[keys[j]])
-            except:
-                pass
+        try:
+            sub_obj = json_data[i]
+            if i == 0:
+                keys = list(sub_obj.keys())
+        except:
+            pass
 
-    wb.save(filename)
-
+    with open(filename, 'w',encoding='UTF-8',newline='') as csvfile:
+        csvwriter = DictWriter(csvfile,fieldnames = keys)
+        csvwriter.writeheader()
+        csvwriter.writerows(json_data)
+    csvfile.close()
 
 def get_comment(sess: requests.Session, product_id: int, page: int = 1, pager: bool = False) -> List[Comment]:
     URL = f'https://api.digikala.com/v1/product/{product_id}/comments/?page={page}'
@@ -75,7 +71,7 @@ if __name__ == '__main__':
     product_id = 3493882
     
     sesstion = requests.Session()
-    filename = "D:\Programming\ML_projects\OutputFiles\Stage\\" +  str(product_id)  + ".xlsx"
+    filename = "D:\Programming\ML_projects\OutputFiles\Stage\\" +  str(product_id)  + ".csv"
     comments, pager = get_comment(sesstion, product_id, pager=True)
     total_pages = pager.get('total_pages')
 
