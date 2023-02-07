@@ -1,7 +1,9 @@
 import pandas as pd
 import os
+import shutil
 
-df = pd.read_csv('D:\Programming\ML_projects\OutputFiles\\3493882.csv')
+OriginFile = 'D:\Programming\ML_projects\OutputFiles\stage\\3493882.csv'
+df = pd.read_csv(OriginFile)
 
 #Below line hold Nan records
 NanRecords = pd.isnull(df['recommendation_status'])
@@ -16,5 +18,6 @@ header = ['productID','body', 'recommendation_status']
 df[NanRecords].to_csv('D:\Programming\ML_projects\OutputFiles\Test\\3493882.csv', columns = header)
 df[NotNanRecords].to_csv('D:\Programming\ML_projects\OutputFiles\Train\\3493882.csv', columns = header)
 
-#After split the original file below code will remove base file
-os.remove('D:\Programming\ML_projects\OutputFiles\\3493882.csv')
+#After split the original file below code will remove and copy base file
+shutil.copy(OriginFile, 'D:\Programming\ML_projects\OutputFiles\OriginFile')
+os.remove(OriginFile)
