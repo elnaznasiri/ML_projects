@@ -1,6 +1,7 @@
 import pandas as pd
 import os
 import shutil
+import hazm
 
 originFile = 'D:\Programming\ML_projects\OutputFiles\stage\\3493882.csv'
 dataSet = pd.read_csv(originFile)
@@ -25,6 +26,19 @@ dataSet[NotNanRecords].to_csv('D:\Programming\ML_projects\OutputFiles\Train\\349
 #TrainSet
 originFile = 'D:\Programming\ML_projects\OutputFiles\Train\\3493882.csv'
 trainSet = pd.read_csv(originFile)
+
+#Normalize body column
+normalizer = hazm.Normalizer()
+# for sentence in trainSet['body']:
+#     normalize = normalizer.normalize(sentence)
+#     print(normalize)
+
+def normalize_sentence(sentences):
+    for sentence in sentences:
+        normalize = normalizer.normalize(sentence)
+    return normalize
+
+print(normalize_sentence(trainSet['body']))
 
 #TestSet
 originFile = 'D:\Programming\ML_projects\OutputFiles\Test\\3493882.csv'
